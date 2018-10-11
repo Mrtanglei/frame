@@ -1,0 +1,14 @@
+spring:
+  jpa:
+    database: mysql #配置数据库类型
+    show-sql: true #是否打印SQL
+    generate-ddl: false
+    hibernate:
+      naming:
+        physical-strategy: config.PrefixSupportedPhysicalNamingStrategy #实体与表命名策略
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/study?characterEncoding=utf-8&amp;useUnicode=true
+    username: root
+    password: rootroot
+    driver-class-name: com.mysql.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
