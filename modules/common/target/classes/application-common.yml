@@ -12,3 +12,6 @@ spring:
     password: rootroot
     driver-class-name: com.mysql.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
+  redis:
+    password: icepoint123
+    database: 1

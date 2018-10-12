@@ -9,6 +9,9 @@ create table other_user_account(
   password_salty varchar(255) not null comment '密码加密盐'
 )engine = InnoDB default charset = utf8 comment '账户表';
 
+insert into other_user_account values (default ,'admin',true,true,'f7c2f7c26d7c3ecdb7f8f1e15ceeff3e',
+'bade8208e4a286d12b67da29ba2c2e6b7f6a935e69f9e4941c471b279eb57dfccb53b966bb008522e33737f44c63b4e7');
+
 drop table if exists other_login_record;
 create table other_login_record(
   id bigint(20) auto_increment primary key,

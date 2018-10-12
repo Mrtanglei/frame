@@ -26,6 +26,8 @@ import java.util.Map;
 /**
  * @author tanglei
  * @date 18/10/11
+ * <p>
+ * shiro配置类
  */
 @Configuration
 public class ShiroConfig {
@@ -35,15 +37,16 @@ public class ShiroConfig {
     private static final String SHIRO_CACHE_REDIS_KEY_PREFIX = "SHIRO_CACHE";
 
     //会话有效期
-    private static final int SHIRO_SESSION_EXPIRE = 30*60;//半小时
+    private static final int SHIRO_SESSION_EXPIRE = 30 * 60;//半小时
 
+    //Shiro拦截器工厂类注入成功
     @Bean
-    public ShiroFilterFactoryBean shirFilter(SecurityManager securityManager) {
+    public ShiroFilterFactoryBean shirFilter() {
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
-        shiroFilterFactoryBean.setSecurityManager(securityManager);
-
+        // 必须设置 SecurityManager
+        shiroFilterFactoryBean.setSecurityManager(securityManager());
         Map<String, Filter> filters = new HashMap<>();
-        filters.put("PGOFilter",authFilter());
+        filters.put("PGOFilter", authFilter());
         shiroFilterFactoryBean.setFilters(filters);
 
         //TODO 应该从数据库读取权限配置
@@ -51,6 +54,7 @@ public class ShiroConfig {
         return shiroFilterFactoryBean;
     }
 
+    @Bean
     public CustomerFormAuthenticationFilter authFilter() {
         return new CustomerFormAuthenticationFilter();
     }
@@ -61,20 +65,19 @@ public class ShiroConfig {
      * 1). anon 可以被匿名访问 2). authc 必须认证(即登录)后才可能访问的页面.
      * 3). logout 登出. 4). roles 角色过滤器
      * <p>
-     * 配置顺序问题：前面的优先匹配,会覆盖后面的
+     * 配置顺序问题：前面的优先匹配,会覆盖后面的,一般将 /**放在最为下边
      *
      * @return
      */
     public LinkedHashMap<String, String> filterChainDefinitionMap() {
         LinkedHashMap<String, String> map = new LinkedHashMap<>();
-        map.put("/brandbusiness/auth/login", "anon");
-        map.put("/brandbusiness/auth/logout", "anon");
+        map.put("/login", "anon");
+        map.put("/logout", "authc");
         //TODO 添加账号暂时允许匿名
-        map.put("/brandbusiness/info/addAccount", "anon");
-        map.put("/brandbusiness/**", "PGOFilter,roles[admin]");
-
-        //剩下的都是可以匿名访问的
-        map.put("/**", "anon");
+        map.put("/user/addUser", "authc,roles[admin]");
+        map.put("/api/**", "PGOFilter");
+        //剩下的需要认证才能访问
+        map.put("/api", "authc");
         return map;
     }
 
@@ -164,16 +167,16 @@ public class ShiroConfig {
     }
 
     /**
-     * 开启shiro aop注解支持.
-     * 使用代理方式;所以需要开启代码支持;
+     * AuthorizationAttributeSourceAdvisor，shiro里实现的Advisor类，内部使用AopAllianceAnnotationsAuthorizingMethodInterceptor
+     * 来拦截用以下注解的方法。
      *
-     * @param securityManager
      * @return
      */
     @Bean
-    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(SecurityManager securityManager) {
-        AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor = new AuthorizationAttributeSourceAdvisor();
-        authorizationAttributeSourceAdvisor.setSecurityManager(securityManager);
+    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor() {
+        AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor =
+                new AuthorizationAttributeSourceAdvisor();
+        authorizationAttributeSourceAdvisor.setSecurityManager(securityManager());
         return authorizationAttributeSourceAdvisor;
     }
 }

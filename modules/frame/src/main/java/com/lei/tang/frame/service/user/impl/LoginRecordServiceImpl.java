@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import repository.user.LoginRecordRepository;
+import utils.IPUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 /**
@@ -22,13 +24,12 @@ public class LoginRecordServiceImpl implements LoginRecordService {
 
     @Transactional
     @Override
-    public LoginRecord save(UserAccount userAccount) {
+    public LoginRecord save(HttpServletRequest request, UserAccount userAccount) {
         if(userAccount != null){
             LoginRecord loginRecord = new LoginRecord();
             loginRecord.setLoginTime(new Date());
             loginRecord.setUserAccount(userAccount);
-            // TODO: 18/10/11
-//            loginRecord.setIp();
+            loginRecord.setIp(IPUtils.getIp(request));
             loginRecordRepository.save(loginRecord);
             return loginRecord;
         }

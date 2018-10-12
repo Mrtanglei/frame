@@ -3,6 +3,8 @@ package com.lei.tang.frame.service.user;
 import entity.user.LoginRecord;
 import entity.user.UserAccount;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * @author tanglei
  * @date 18/10/11
@@ -14,5 +16,5 @@ public interface LoginRecordService {
      * @param userAccount
      * @return
      */
-    LoginRecord save(UserAccount userAccount);
+    LoginRecord save(HttpServletRequest request, UserAccount userAccount);
 }

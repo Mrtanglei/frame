@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * @author tanglei
@@ -15,7 +16,7 @@ import javax.persistence.*;
 @Table(name = "user_account")
 @Getter
 @Setter
-public class UserAccount {
+public class UserAccount implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

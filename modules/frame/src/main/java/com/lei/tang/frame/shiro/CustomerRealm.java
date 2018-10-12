@@ -1,6 +1,5 @@
 package com.lei.tang.frame.shiro;
 
-import com.lei.tang.frame.service.user.LoginRecordService;
 import entity.user.UserAccount;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
@@ -12,9 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import repository.user.UserAccountRepository;
 
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * @author tanglei
  * @date 18/10/11
@@ -24,9 +20,6 @@ public class CustomerRealm extends AuthorizingRealm {
     @Autowired
     private UserAccountRepository userAccountRepository;
 
-    @Autowired
-    private LoginRecordService loginRecordService;
-
     //用户授权，登录成功后回调
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
@@ -34,9 +27,13 @@ public class CustomerRealm extends AuthorizingRealm {
         UserAccount account = (UserAccount) principalCollection.getPrimaryPrincipal();
 
         //TODO 利用登录的用户的信息来获取当前用户的角色
-        Set<String> roles = new HashSet<>();
-        roles.add("admin");
-        SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo(roles);
+//        Set<String> roles = new HashSet<>();
+//        roles.add("admin");
+//        Set<String> permissions = new HashSet<>();
+//        permissions.add("admin");
+        SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
+        simpleAuthorizationInfo.addRole("admin");
+//        simpleAuthorizationInfo.setStringPermissions(permissions);
         return simpleAuthorizationInfo;
     }
 
@@ -47,7 +44,7 @@ public class CustomerRealm extends AuthorizingRealm {
         Assert.hasText(account, "账号不能为空");
         UserAccount userAccount = userAccountRepository.findUserAccountByAccount(account);
         if(userAccount == null){
-            throw new UnknownAccountException();
+            throw new UnknownAccountException("账号不正确");
         }
         //principal: 认证的实体信息.
         Object principal = userAccount;
